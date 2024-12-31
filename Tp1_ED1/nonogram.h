@@ -1,19 +1,21 @@
-#ifndef NONOGRAM_H
-#define NONOGRAM_H
+#ifndef nonogram_h
+#define nonogram_h
 
-typedef struct {
-    int dimension;
-    char **board;
-    int **row_hints;
-    int **col_hints;
-} Nonogram;
+typedef struct dicas Dicas;
+typedef struct nonograma Nonograma;
 
-// Funções para manipulação do Nonograma
-Nonogram* NonogramAllocate(int dimension);
-void NonogramFree(Nonogram* ng);
-void NonogramRead(Nonogram* ng);
-void NonogramPrint(Nonogram* ng);
-int NonogramPlay(Nonogram* ng);
-int checkSolution(Nonogram* ng);
+Dicas *DicksAllocate(int n);
+
+Nonograma *NonogrammAllocate(int n);
+
+Nonograma *NonogrammFree(Nonograma *nonograma);
+
+void NonogrammRead(Nonograma *nonograma);
+
+void NonogrammPrint(Nonograma *nonograma);
+
+void NonogrammPlay(Nonograma *nonograma, int i, int j);
+
+void NonogrammInicio(Nonograma *nonograma);
 
 #endif

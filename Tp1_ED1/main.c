@@ -1,20 +1,23 @@
-#include <stdio.h>
 #include "nonogram.h"
+#include <stdio.h>
 
 int main() {
-    int dimension;
-    scanf("%d", &dimension);  // Lê a dimensão do tabuleiro
+  // Dicas *tips = DickAllocate(5);
+  int n;
+  printf("\nn\n");
+  scanf("%d", &n);
+  Nonograma *nono = NonogrammAllocate(n);
+  // printf("\n1\n");
+  NonogrammInicio(nono);
+  NonogrammRead(nono);
+  NonogrammPrint(nono);
 
-    Nonogram* ng = NonogramAllocate(dimension);  // Aloca o Nonograma
-    NonogramRead(ng);  // Lê os dados do Nonograma
+  NonogrammPlay(nono, 0, 0);
 
-    int solutions = NonogramPlay(ng);  // Resolve o Nonograma e imprime a solução
-    if (solutions == 0) {
-        printf("Nosolutionwasfound!\n");
-    } else {
-        printf("Totalofsolutions: %d\n", solutions);
-    }
+  printf("\nSolution:\n");
+  NonogrammPrint(nono);
+  NonogrammFree(nono);
 
-    NonogramFree(ng);  // Libera a memória
-    return 0;
+  printf("\nOk\n");
+  return 0;
 }

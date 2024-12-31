@@ -1,117 +1,141 @@
+#include "nonogram.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "nonogram.h"
 
-// Função para alocar memória para o Nonograma
-Nonogram* NonogramAllocate(int dimension) {
-    Nonogram* ng = (Nonogram*)malloc(sizeof(Nonogram));
-    ng->dimension = dimension;
-    
-    ng->board = (char**)malloc(dimension * sizeof(char*));
-    for (int i = 0; i < dimension; i++) {
-        ng->board[i] = (char*)malloc(dimension * sizeof(char));
-        memset(ng->board[i], '.', dimension * sizeof(char));  // Inicializa com '.'
-    }
+// armazenar dicas
+struct dicas {
+  int *linhas;
+  int *colunas;
+  int lqnt;
+  int cqnt;
+  int l;
+  int c;
+};
 
-    ng->row_hints = (int**)malloc(dimension * sizeof(int*));
-    ng->col_hints = (int**)malloc(dimension * sizeof(int*));
-    
-    for (int i = 0; i < dimension; i++) {
-        ng->row_hints[i] = (int*)malloc(dimension * sizeof(int));
-        ng->col_hints[i] = (int*)malloc(dimension * sizeof(int));
-        memset(ng->row_hints[i], 0, dimension * sizeof(int));
-        memset(ng->col_hints[i], 0, dimension * sizeof(int));
-    }
+// armazenar o jogo, dimensão e dicas
+struct nonograma {
+  char **mat;
+  Dicas *dicas;
+  int n;
+};
 
-    return ng;
+// aloca um vetor de dicas do tamanho n*2, para cada Dicas aloca um vetor com a
+// tanto de dicas para cada linha e coluna
+Dicas *DicksAllocate(int n) {
+  Dicas *dicas = malloc(n * 2 * sizeof(Dicas));
+  for (int i = 0; i < n; i++) {
+    dicas[i].colunas = malloc((n / 2) + 1 * sizeof(int));
+  }
+  for (int i = n; i < n * 2; i++) {
+    dicas[i].linhas = malloc((n / 2) + 1 * sizeof(int));
+  }
+  return dicas;
 }
 
-// Função para liberar memória alocada para o Nonograma
-void NonogramFree(Nonogram* ng) {
-    for (int i = 0; i < ng->dimension; i++) {
-        free(ng->board[i]);
-        free(ng->row_hints[i]);
-        free(ng->col_hints[i]);
-    }
-    free(ng->board);
-    free(ng->row_hints);
-    free(ng->col_hints);
-    free(ng);
+// alocar o nonograma com as dicas corretamente
+Nonograma *NonogrammAllocate(int n) {
+  Nonograma *nonograma = malloc(n * sizeof(Nonograma));
+  nonograma->mat = malloc(n * sizeof(char *));
+  for (int i = 0; i < n; i++) {
+    nonograma->mat[i] = malloc(n * sizeof(char));
+  }
+  nonograma->n = n;
+  nonograma->dicas = DicksAllocate(n);
+
+  return nonograma;
 }
 
-// Função para ler o tabuleiro e dicas
-void NonogramRead(Nonogram* ng) {
-    int i, j;
-    // Lê o número de grupos por coluna
-    for (i = 0; i < ng->dimension; i++) {
-        scanf("%d", &ng->col_hints[i][0]);
-        for (j = 1; j < ng->col_hints[i][0]; j++) {
-            scanf("%d", &ng->col_hints[i][j]);
-        }
-    }
-    // Lê o número de grupos por linha
-    for (i = 0; i < ng->dimension; i++) {
-        scanf("%d", &ng->row_hints[i][0]);
-        for (j = 1; j < ng->row_hints[i][0]; j++) {
-            scanf("%d", &ng->row_hints[i][j]);
-        }
-    }
+// libera o nonograma
+// arrumar isso
+Nonograma *NonogrammFree(Nonograma *nonograma) {
+  free(nonograma->dicas->linhas);
+  free(nonograma->dicas->colunas);
+  free(nonograma);
+  return NULL;
 }
 
-// Função para imprimir o tabuleiro
-void NonogramPrint(Nonogram* ng) {
-    for (int i = 0; i < ng->dimension; i++) {
-        for (int j = 0; j < ng->dimension; j++) {
-            printf("%c", ng->board[i][j]);
-        }
-        printf("\n");
+void NonogrammInicio(Nonograma *nonograma) {
+  for (int i = 0; i < nonograma->n; i++) {
+    for (int j = 0; j < nonograma->n; j++) {
+      nonograma->mat[i][j] = ' ';
     }
+  }
+}
+// leitura das linhas(0,n-1), colunas(n, n*2-1)
+void NonogrammRead(Nonograma *nonograma) {
+  printf("Vamos ler\n");
+  for (int i = 0; i < nonograma->n; i++) {
+    int j = 0;
+    while (scanf("%d", &nonograma->dicas[i].colunas[j]) == 1) {
+
+      char c = getchar();
+
+      j++;
+      if (c == EOF || c == '\n')
+        break;
+      if (ungetc(c, stdin) == EOF)
+        break;
+    }
+
+    nonograma->dicas[i].cqnt = j;
+  }
+
+  for (int i = nonograma->n; i < (nonograma->n) * 2; i++) {
+    int j = 0;
+
+    while (scanf("%d", &nonograma->dicas[i].linhas[j]) == 1) {
+      char c = getchar();
+
+      j++;
+      if (c == EOF || c == '\n')
+        break;
+      if (ungetc(c, stdin) == EOF)
+        break;
+    }
+
+    nonograma->dicas[i].lqnt = j;
+  }
+  printf("\n[Leu]\n");
 }
 
-// Função para verificar se a solução está correta
-int checkSolution(Nonogram* ng) {
-    // Verifica se as dicas de linhas e colunas estão sendo atendidas
-    for (int i = 0; i < ng->dimension; i++) {
-        int row_count = 0, col_count = 0;
-        // Verifica linhas
-        for (int j = 0; j < ng->dimension; j++) {
-            if (ng->board[i][j] == '#') {
-                row_count++;
-            }
-        }
-        // Verifica colunas
-        for (int j = 0; j < ng->dimension; j++) {
-            if (ng->board[j][i] == '#') {
-                col_count++;
-            }
-        }
-        
-        if (row_count != ng->row_hints[i][0] || col_count != ng->col_hints[i][0]) {
-            return 0; // Se qualquer linha ou coluna não estiver correta
-        }
+// printa as dicas pra ver se tá certo
+void NonogrammPrint(Nonograma *nonograma) {
+
+  for (int i = 0; i < nonograma->n; i++) {
+    for (int j = 0; j < nonograma->n; j++) {
+      printf("[%c]", nonograma->mat[i][j]);
     }
-    return 1; // Se todas as dicas estiverem corretas
+    printf("\n");
+  }
+
+  return;
 }
 
-// Função para resolver o Nonograma utilizando backtracking
-int NonogramPlay(Nonogram* ng) {
-    int solutions = 0;
-    
-    // Tente preencher o Nonograma (simplificado, exemplo básico de preenchimento)
-    // Verifica o preenchimento com base nas dicas
-    for (int i = 0; i < ng->dimension; i++) {
-        for (int j = 0; j < ng->dimension; j++) {
-            if (ng->board[i][j] == '.') {
-                ng->board[i][j] = '#';  // Preenche uma célula arbitrária
-                if (checkSolution(ng)) {
-                    solutions++;
-                    NonogramPrint(ng);  // Imprime a solução
-                }
-                ng->board[i][j] = '.';  // Desfaz o preenchimento caso não seja solução
-            }
-        }
-    }
+void NonogrammPlay(Nonograma *nonograma, int i, int j) {
+  if (i == nonograma->n || j == nonograma->n) {
+    return;
+  }
+  if (!(nonograma->dicas[j].colunas[0] == nonograma->dicas[j].c ||
+        nonograma->dicas[nonograma->n + i].linhas[0] ==
+            nonograma->dicas[nonograma->n + i].l)) {
+    nonograma->mat[i][j] = '*';
+    nonograma->dicas[j].c++;
+    nonograma->dicas[nonograma->n + i].l++;
+    // return;
+  }
 
-    return solutions;
+  // recursão nanogrammplay
+  NonogrammPlay(nonograma, i, j + 1);
+  /*
+                0   1  2  3  4  5
+                [2][0][1][2][0][1]
+
+                    d   2  0  1
+                     i  0  1  2
+                     
+                  2 0  [*][ ][*]
+                  0 1  [ ][ ][ ]
+                  1 2  [*][ ][ ]
+  */
+  NonogrammPlay(nonograma, i + 1, j);
 }
