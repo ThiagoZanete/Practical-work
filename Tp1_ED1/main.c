@@ -2,22 +2,20 @@
 #include <stdio.h>
 
 int main() {
-  // Dicas *tips = DickAllocate(5);
-  int n;
-  printf("\nn\n");
-  scanf("%d", &n);
-  Nonograma *nono = NonogrammAllocate(n);
-  // printf("\n1\n");
-  NonogrammInicio(nono);
-  NonogrammRead(nono);
-  NonogrammPrint(nono);
+    int n;
+    printf("\nTamanho do tabuleiro: ");
+    scanf("%d", &n);
 
-  NonogrammPlay(nono, 0, 0);
+    Nonograma *nono = NonogrammAllocate(n);
+    NonogrammInicio(nono);
+    NonogrammRead(nono);
+    NonogrammPrint(nono);
 
-  printf("\nSolution:\n");
-  NonogrammPrint(nono);
-  NonogrammFree(nono);
+    NonogrammPlay(nono, 0, 0);
 
-  printf("\nOk\n");
-  return 0;
+    printf("\nSolução:\n");
+    NonogrammPrint(nono);
+    NonogrammFree(nono);
+
+    return 0;
 }
