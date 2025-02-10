@@ -1,0 +1,461 @@
+\documentclass{article}
+
+\input{setup}
+
+\begin{document}
+
+\CAPA{Nonogramas}{BCC202 - Estrutura de dados I}{Thayllon Ryan Bragança\\Thiago Martins Zanete}{Pedro Henrique Lopes Silva}
+
+\section{Introdução}
+\indent Para este trabalho é necessário entregar o código em C e um relatório referente ao que foi desenvolvido. O algoritmo a ser desenvolvido deve ser capaz de resolver um nonograma, utilizando-se das dicas fornecidas nos inputs.
+
+A codificação deve ser feita em C, usando somente a biblioteca padrão da GNU, sem o uso de bibliotecas adicionais. Além disso, deve-se usar um dos padrões: ANSI C 89 ou ANSI C 99.
+
+\subsection{Especificações do problema}
+
+Este trabalho prático aborda a resolução de um problema relacionado a nonogramas, um tipo de quebra-cabeça de tabuleiro. O objetivo do jogador é preencher as células do tabuleiro de acordo com as dicas fornecidas para cada linha e coluna.
+
+Para solucionar o problema de forma eficiente, foi necessário desenvolver um algoritmo que utiliza conceitos fundamentais de programação. O tabuleiro foi representado como uma matriz alocada dinamicamente, enquanto as dicas foram estruturadas em dois vetores distintos, um para as colunas e outro para as linhas.
+
+A abordagem adotada incluiu a definição de Tipos Abstratos de Dados (TADs) para organizar as dicas e o tabuleiro. Funções específicas foram criadas para alocar, preencher e imprimir essas estruturas. A lógica principal do algoritmo foi implementada em várias funções que juntas são responsáveis pela resolução automática do quebra-cabeça.
+
+
+\subsection{Considerações iniciais}
+
+Algumas ferramentas foram utilizadas durante a criação deste projeto:
+
+\begin{itemize}
+    \item Ambientes de desenvolvimento do código fonte: Replit, VSCode e CLion.
+    \item Linguagem utilizada: C.
+    \item Ambiente de desenvolvimento da documentação: Overleaf (LaTeX).
+\end{itemize}
+
+\subsection{Ferramentas utilizadas}
+
+Algumas ferramentas foram utilizadas para testar a implementação, como:
+
+\begin{itemize}
+    \item GNU Compiler Collection (GCC): Compilador C.
+    \item Valgrind: Ferramenta de análise da memória dinâmica do código.
+    \item Git: Repositório local.
+    \item GitHub: Repositório remoto.
+    \item GitHub: \texttt{corrector.py} (ferramenta disponibilizada pelo professor).
+\end{itemize}
+
+\subsection{Especificações da máquina}
+A máquina onde o desenvolvimento e os testes foram realizados possui a seguinte configuração:
+\begin{itemize}
+    \item[-] Processador: Intel Core i5 8350u .
+    \item[-] Memória RAM: 16 Gb.
+    \item[-] Sistema Operacional: Linux (UBuntu).
+\end{itemize}
+
+\subsection{Instruções de compilação e execução}
+
+Para a compilação do projeto, basta digitar:
+
+\begin{tcolorbox}[title=Compilando o projeto,width=\linewidth]
+    gcc main.c nonogram.c -o exe -std=c99 -Wall -g
+\end{tcolorbox}
+
+Usou-se para a compilação as seguintes opções:
+\begin{itemize}
+    \item [-] \emph{-std=99}: para usar-se o padrão ANSI C 99, conforme exigido.
+    \item [-] \emph{-g}: para compilar com informação de depuração e ser usado pelo Valgrind.
+    \item [-] \emph{-Wall}: para mostrar todos os possível \emph{warnings} do código.
+  
+\end{itemize}
+
+Para a execução do programa basta digitar:
+\begin{tcolorbox}[title=,width=\linewidth]
+    ./exe caminho\_até\_o\_arquivo\_de\_entrada opcao
+\end{tcolorbox}
+
+Onde ``opcao'' pode ser: ``p'' para fazer a, ``d'' para fazer b e ``n'' para fazer c.
+
+
+\section{Implementação}
+
+Para a implementação do algoritmo que resolve um nonograma utilizamos do pensamento computacional para separar o programa em partes, facilitando assim a sua compreensão e resolução.
+
+\subsection{Modularização}
+
+Visando melhorar a legibilidade e manutenibilidade do código, decidimos separá-lo em três módulos:
+
+\begin{itemize}
+    \item \texttt{nonogramm.c}: Onde a lógica do programa foi implementada, ou seja, a ação de cada função está neste módulo.
+    \item \texttt{nonogramm.h}: Apenas os cabeçalhos das funções são declarados aqui.
+    \item \texttt{main.c}: A parte onde as funções são chamadas, podendo assim executar o programa e verificar sua funcionalidade.
+\end{itemize}
+
+\subsection{Funções complementares}
+
+A fim de garantir o funcionamento do algoritmo de resolução de nonogramas, várias funções foram implementadas. São essas as funções complementares, pois não atuam diretamente na lógica de resolução do quebra-cabeças.
+
+Funções para alocar e desalocar a memória utilizada durante a execução do programa foram devidamente implementadas a fim de otimizar espaço e eficiência do algoritmo.
+
+Com a capacidade de ler as dicas, preencher o tabuleiro vazio e imprimir o jogo, algumas outras funções foram feitas, garantindo assim a funcionalidade correta e uma melhor experiência para o usuário.
+
+Além disso, durante o desenvolvimento e depuração do código alguns outros métodos foram desenvolvidos principalmente para ajudar na correção de possíveis erros gerados. No entanto, essa parte não está contida na versão final, pois assim é possível entregar uma resolução mais organizada e legível.
+
+\subsection{Funções principais}
+
+Para implementar a parte responsável por de fato resolver o problema, foram implementadas algumas funções, estando essas condicionadas a uma função principal onde a recursão estava realmente aplicada.
+
+Para checar em cada linha e coluna se as dicas estavam sendo respeitadas, duas funções foram desenvolvidas, ambas verificavam a cada nova inserção se o preenchimento estava sendo respeitado, ou seja, se ultrapassou ou não alcançou o limite estipulado pela TAD de dicas. Com base nisso, outra função mostrou-se ser necessária. Com o objetivo de checar se a linha já está completa, podendo assim com base no resultado, avançar a resolução. Dessa forma, checar a cada preenchimento trabalhava lado a lado com a verificação de uma linha ou coluna, proporcionando assim, maior organização do código e melhor eficiência ao longo da resolução do nonograma.
+
+Para cada nova inserção na matriz, um novo procedimento foi criado, tendo como principal objetivo unir as verificações anteriores. Desse modo, antes de alterar qualquer coisa no tabuleiro essa função era chamada, que por sua vez chamava outras duas verificando célula por célula. 
+
+A função responsável pela recursão e backtracking, intitulada “NonogrammPlay”, tinha como objetivo percorrer e preencher todo o quebra-cabeças, utilizando para isso, as verificações anteriores antes de avançar. Em caso de inconsistência, o algoritmo utiliza-se do backtracking retornando preenchimentos até o último estado válido, e então sempre tentando continuar de uma forma diferente da anterior. Em caso satisfatório, quando um nononograma chegasse ao final da resolução passando por todas estas etapas, o jogo é impresso, e o programa continua a explorar outras soluções para o mesmo tabuleiro.
+
+Além disso, em caso do algoritmo testar de todas as formas possíveis e não conseguir progredir, pode-se considerar que o nonograma não tem solução, o que é mostrado ao usuário por uma pequena função, que também em casos positivos mostra o total de resultados possíveis para determinado jogo. 
+
+
+\subsubsection{NonogrammPlay}
+
+Inicialmente essa função foi desenvolvida usando a lógica de preencher cada linha de uma coluna, dessa forma, quando essa função era chamada, começava a preencher da linha inicial e coluna inicial, e preenchia sistematicamente, considerando as restrições, linha por linha dá uma coluna, quando chegava ao limite daquela coluna, o algoritmo vai para a próxima, mas na linha inicial novamente.
+
+Essa solução apresentou um resultado satisfatório para todos os testes, exceto o 3.in, que invertia a ordem da solução número 4 com a número 5. Mais tarde, mudou-se o preenchimento das células, usando a lógica de preenchimento de todas as linhas, ao contrário do que era feito antes. 
+
+O código final preenchia a linha/coluna atual, se era válido, chamava o NonogrammPlay adicionando uma unidade ao índice da coluna, para tentar preencher o novo item da linha. Caso o preenchimento naquela linha não seja válido, vai desfazer a ação, indo para a próxima célula repetindo até chegar no limite da linha, onde preenchemos todas as linhas e colunas possíveis, printando aquela solução.
+
+Após isso, o algoritmo para a primeira inserção, desfazendo, e tentando preencher a próxima linha. Dessa forma, o backtracking garante a exploração de todo o espaço de solução.
+
+
+\subsubsection{CheckLine/CheckCol}
+
+Essas funções são responsáveis por checar toda a linha do início até a posição que foi inserida, a fim de verificar se aquela inserção está válida em comparação com as dicas fornecidas.
+
+O algoritmo trabalha da seguinte forma: temos uma iteração iniciando da posição 0 até a posição atual da coluna, ou seja, matriz[lin][i], sendo “lin” a posição linha da matriz e “i” cada coluna naquela linha.
+
+Para cada iteração, é testado se naquela posição tem uma célula preenchida, se sim, adicionamos ao contador, se na próxima iteração, o próximo bloco não estiver preenchido, e se o contador for maior que zero, nesse ponto, se a contagem for diferente da quantidade de dica quer dizer que o bloco tá incompleto ou errado, se não, vamos para a próxima dica naquela linha e redefinimos o contador para 0, mas caso não exista próxima dica, quer dizer que ultrapassamos o limite de dicas permitido.
+
+Para cada vez que entrar em contador > 0, quer dizer que estamos em um bloco não preenchido, ou seja, indo de uma dica, para a próxima.
+
+O mesmo ocorre na função CheckCol, mas com algumas alterações, por exemplo, é checado do início da coluna até a o ponto que foi inserido e também é trabalho com a matriz no formato matriz[i][col], sendo “col”, a posição coluna da matriz e “i”, cada linha naquela coluna.
+
+
+\subsubsection{CheckIsCompletedLine}
+
+Como o algoritmo preenche o tabuleiro linha por linha, e durante essa ação era testado somente se aquela coluna/linha podia ser inserida ou não, mas em alguns casos, quando a próxima linha seria preenchida, a anterior ainda estava incompleta.
+
+Dessa forma, foi criado um método que contava a quantidade total permitida pelas dicas naquela linha  e quantos blocos estão preenchidos naquela linha, assim, quando o algoritmo for preencher a atual, ele testa se a anterior está completa, caso não esteja, vai retornar até a última pré-solução válida.
+
+\subsection{Considerações}
+No decorrer do desenvolvimento do programa, algumas funções mostraram-se desafiadoras no quesito implementação, principalmente as checagens de linhas  colunas.
+Chegar na lógica de resolução de um nonograma revelou ser uma tarefa um tanto complexa, por serem muitas etapas e checagens que devem ser executadas de forma sequencial e estarem completamente alinhadas com o objetivo final. Devido a isso, e com base em muita análise do problema, várias formas de resolução foram propostas, até chegar aos resultados apresentados em \textbf{2.1} e \textbf{2.2}, onde foi possível equilibrar robustez e entendimento do código.
+
+\section{Testes}
+
+Os testes essenciais durante o desenvolvimento do código, pois assim foi possível verificar a cada novo trecho escrito se o caminho seguido continuava promissor, ou seja, se manter tal abordagem levaria a resolução completa do problema. 
+
+\subsection{Testes iniciais}
+
+A cada nova função implementada, sua eficácia era testada tanto individualmente, quanto em conjunto com outras, focando principalmente nas funções complementares, que foram mencionadas no tópico \textbf{2.2}.
+
+Nessa etapa foram submetidas a testes,principalmente funções de alocar e desalocar. Utilizando o Valgrind, a fim de detectar vazamentos de memória, foi possível detectar pequenos erros que impediam a liberação completa de memória, erros esses que foram devidamente corrigidos assim que eram encontrados.
+
+Além disso, funções responsáveis por ler as dicas fornecidas, imprimir o jogo na tela, e iniciar o tabuleiro em branco foram postas à prova, com testes manuais no próprio terminal, usando como base os arquivos de entradas fornecidos pelo professor, foi possível garantir a eficácia destas. Desse modo, estas funções foram, de certa forma, aprovadas para permanecerem sem grandes alterações até o final do código, estabelecendo assim, com o auxílio do git e GitHub uma espécie de checkpoint no código.
+
+\subsection{Testes de lógica geral}
+Com o objetivo de testar principalmente as funções que de fato resolviam o nonograma, como mencionado em 2.3, uma série de testes foram feitos.
+A princípio, antes de serem desenvolvidas, estas funções passavam por pequenos questionamentos resolvidos entre os membros do grupo, para assim começarem a ser implementadas. Como mencionado em 2, primeiramente o algoritmo deveria ser capaz de resolver um exemplo de nonograma o mais simples possível, ou seja, onde todas as dicas são 1, pois assim o resultado seria uma diagonal completa. Essa etapa foi criada rapidamente, passando no teste sem muitas dificuldades.
+Para completar o programa foi preciso implementar as funções principais \textbf{(2.3)}, que de certa forma desafiaram as capacidades cognitivas dos membros. Ao serem implementadas eram imediatamente submetidas aos casos de testes propostos pelo professor, que em grande parte das vezes falhavam, provavelmente por lógica incorreta ou incompleta. Durante o desenvolvimento, essas funções apresentavam problemas que eram corrigidos, e criavam outros. Com base em muito estudo e análise, foi possível corrigir erros a cada teste, até finalmente serem capazes de passar em todos os casos, estando aptas a resolver corretamente o nonograma.
+
+
+\subsection{Testes finais}
+
+Nesta etapa, apenas erros de formatação foram testados e corrigidos, para se adequar ao formato de saídas proposto.
+
+Mensagens ao usuário em caso de não encontrar uma solução para o jogo, quantidade de soluções encontradas e formatação de quebra de linha na saída do programa foram cuidadosamente analisadas e corrigidas, a fim de se adequarem ao que foi pedido no PDF do trabalho e nos resultados dos casos de testes.
+
+Além disso, alguns comentários além dos existentes foram adicionados no código, facilitando assim a compreensão e manutenção futura deste.
+
+
+\section{Análise}
+Essa etapa é importante para avaliar o código, sua legibilidade, manutenibilidade e complexidade, pois assim, pode-se determinar possíveis alterações que melhorem a eficiência e velocidade do código.
+
+\subsection{Análise geral}
+ Após a finalização do projeto, uma análise geral do que foi escrito foi necessária. A fim de avaliar o entendimento do código, uma busca por possíveis simplificações foi feita, onde pequenas, mas importantes, alterações foram realizadas, como, mudar o nome de algumas variáveis, deixando seu uso mais explícito e exclusão de trechos de comentários desnecessários futuramente. Ademais, uma rápida conferida na indentação geral mostrou-se bastante útil, garantindo assim, maior organização do projeto.
+
+ Uma verificação da memória e do tempo gastos, para a execução de cada teste foi realizada, a fim de avaliar a eficiência do programa, conforme especificado na tabela abaixo.
+
+\begin{table}[!htb]
+    \centering
+    \begin{tabular}{l | l | l}
+    \hline
+    Teste & Tempo (s) & Memória (bytes) \\ \hline
+    1     & 0,004     & 5.649           \\ \hline
+    2     & 0,004     & 5.417           \\ \hline
+    3     & 0,004     & 5.649           \\ \hline
+    4     & 0,004     & 5.417           \\ \hline
+    5     & 0,004     & 6.444           \\ \hline
+    6     & 0,004     & 5.417           \\ \hline
+    \end{tabular}
+   % \caption{Tabela com tempo de execução e memória utilizada.}
+    \label{tab:tempo_memoria}
+\end{table}
+
+\subsection{Análise assintótica}
+
+Conforme foi pedido, a análise de tempo gasto para resolver o problema foi avaliada para cada função principal \textbf{(2.3)}, conforme listado abaixo:
+
+\begin{center}
+\textbf{Função CheckLine}
+\end{center}
+
+\begin{lstlisting}
+    int checkLine(Nonograma *nonograma, int lin, int col, int position) {
+    int count = 0;
+
+    for (int i = 0; i <= col; i++) {
+        if (nonograma->mat[lin][i] == '*') {
+            count++;
+            if (count > nonograma->dicas[nonograma->n + lin].linhas[position]) {
+                return 0; // Excedeu o permitido pela dica atual
+            }
+        } else if (count > 0) {
+            // Separamos um bloco, verificamos se o bloco corresponde a dica
+            if (count != nonograma->dicas[nonograma->n + lin].linhas[position]) {
+                return 0; // Bloco incompleto ou incorreto
+            }
+            position++;
+            count = 0;
+
+            if (position >= nonograma->dicas[nonograma->n + lin].lqnt) {
+                return 0; // Excedeu o numero de dicas permitidas
+            }
+        }
+    }
+
+    return 1;
+}
+\end{lstlisting}
+
+
+\begin{center}
+    Função de complexidade:\\
+    * Col = n\\
+    * f(n) = n + 1\\
+    * Notação Assintótica:\\
+    * O(n + 1) = O(n)\\
+\end{center}
+
+
+
+\begin{center}
+    \textbf{Função CheckCol}
+\end{center}
+\begin{lstlisting}
+    int checkCol(Nonograma *nonograma, int lin, int col, int position) {
+    int count = 0;
+
+
+    for (int i = 0; i <= lin; i++) {
+        if (nonograma->mat[i][col] == '*') {
+            count++;
+            if (count > nonograma->dicas[col].colunas[position]) {
+                return 0; // Excedeu o permitido pela dica atual
+            }
+        } else if (count > 0) {
+            // Separamos um bloco, verificamos se o bloco corresponde a dica
+            if (count != nonograma->dicas[col].colunas[position]) {
+                return 0; // Bloco incompleto ou incorreto
+            }
+            position++;
+            count = 0;
+
+            if (position >= nonograma->dicas[col].cqnt) {
+                return 0; // Excedeu o numero de dicas permitidas
+            }
+        }
+    }
+
+    return 1;
+}
+\end{lstlisting}
+\begin{center}
+    Função de complexidade:\\
+    * Lin = n\\
+    * f(n) = n + 1\\
+    * Notação Assintótica:\\
+    * O(n + 1) = O(n)\\
+\end{center}
+
+
+
+\begin{center}
+    \textbf{Função CheckInsertion}
+\end{center}
+\begin{lstlisting}
+    int checkInsertion(Nonograma *nonograma, int lin, int col) {
+
+    int condition = 1;
+
+    condition = checkCol(nonograma, lin, col, 0);
+
+    if(condition){
+        condition = checkLine(nonograma, lin, col, 0);
+    }
+
+    if (nonograma->dicas[col].cqnt == 0 ||
+        nonograma->dicas[nonograma->n + lin].lqnt == 0) {
+        condition = 0;
+    }
+
+    return condition;
+}
+\end{lstlisting}
+\begin{center}
+    Função de complexidade:\\
+    * CheckCol = n, CheckLin = n\\
+      No pior caso, analisando os últimos blocos da linha/coluna\\
+    * Logo\\
+    * F(n + m) = 2n + 1\\
+    * Notação Assintótica:\\
+    * O(2n + 1) = O(n)\\
+\end{center}
+
+
+
+\begin{center}
+   \textbf{Função CheckIsCompletedLine}
+\end{center}
+\begin{lstlisting}
+    int checkIsCompletedLine(Nonograma *nonograma, int lin, int col) {
+    int totalInLine = 0;
+    for (int i = 0; i < nonograma->dicas[nonograma->n + lin].lqnt; i++) {
+        totalInLine += nonograma->dicas[nonograma->n + lin].linhas[i]; // 1
+    }
+
+    int count = 0;
+    for (int i = 0; i <= col; i++) {
+        if (nonograma->mat[lin][i] == '*') { // 1
+            count++;
+        }
+    }
+
+    return count == totalInLine;
+}
+\end{lstlisting}
+\begin{center}
+   * Função de Complexidade:\\
+   * Assim como na CheckInsertion, a função será dada da por:\\
+   * f(n + m) = n + m\\
+   * Já que no pior caso, Columns totais sempre sera maior que a quantidade totais de dicas.\\
+   * Notação Assintótica:\\
+   * O(n + m) = O(n)\\
+
+\end{center}
+
+
+
+\begin{center}
+    \textbf{Função NonogrammPlay}
+\end{center}
+\begin{lstlisting}
+    void NonogrammPlay(Nonograma *nonograma, int lin, int col, int *solutions) {
+
+    if (lin == nonograma->n) {
+        *solutions+=1;
+        printf("SOLUTION %d:\n", *solutions);
+        NonogrammPrint(nonograma); // Imprime a solucao
+        printf("\n"); // Adiciona uma linha em branco entre solucoes
+        return; // Continua explorando outras solucoes
+    }
+
+    if (col == nonograma->n) {
+        if (!checkIsCompletedLine(nonograma, lin, col-1)) {
+            return; // Linha incompleta
+        }
+        NonogrammPlay(nonograma, lin+1, 0, solutions); // Proxima Coluna
+        return;
+    }
+
+    nonograma->mat[lin][col] = '*';
+    if (checkInsertion(nonograma, lin, col)) {
+        NonogrammPlay(nonograma, lin, col+1, solutions); // Avanca para a proxima coluna
+    }
+
+    nonograma->mat[lin][col] = '.';
+    NonogrammPlay(nonograma, lin, col+1, solutions);
+}
+\end{lstlisting}
+\begin{center}
+   \textbf{Função de Complexidade:}\\[1em]
+   Para cada chamada de \texttt{NonogrammPlay}, temos mais 2 dela mesma.\\[1em]
+
+   \textbf{A equação seria:}\\[1em]
+   \( T(n) = 2 \cdot T(n-1) \)\\
+   \( T(n) = T(0) = 1 \)\\[1em]
+   \( T(n-1) \) é a quantidade restante para resolver o restante das células.\\[2em]
+
+   \textbf{Já no pior caso, de visitar todas as células, temos \( n = n \cdot n \):}\\
+   \( T(n \cdot n) = 2 \cdot T(n \cdot n - 1) + O(n) \)\\[1em]
+
+   \textbf{Expandindo:}\\[1em]
+   \( T(n \cdot n) = 2 \cdot T(n \cdot n - 1) + O(n) \)\\
+   \( T(n \cdot n - 1) = 2 \cdot (2 \cdot T(n \cdot n - 2)) + O(n) \)\\
+   \( T(n \cdot n - 2) = 2 \cdot (2 \cdot (2 \cdot T(n \cdot n - 3))) + O(n) \)\\
+   \( T(n \cdot n - 3) = 2 \cdot (2 \cdot (2 \cdot (2 \cdot T(n \cdot n - 4)))) + O(n) \)\\[1em]
+   \(\ldots\)\\
+   \( T(n \cdot n - k) = 2^k \cdot T(0) \)\\[1em]
+   \( T(0) = 1 \)\\[2em]
+
+   \textbf{Prova:}\\[1em]
+   \( n = 2 \)\\[2em]
+
+ 
+   \( T(4) = 2^1 \cdot T(3) + O(n) \)\\
+   \( T(3) = 2^2 \cdot T(2) + O(n) \)\\
+   \( T(2) = 2^3 \cdot T(1) + O(n) \)\\
+   \( T(1) = 2^4 \cdot (2 \cdot T(0)) + O(n) \)\\[2em]
+  
+
+   Elevamos o 2, \( k \) vezes, \( k = 4 \).\\[1em]
+   \( T(k+1) = 1 \Rightarrow T(0) = 1 \)\\
+   \( k + 1 = n^2 \Rightarrow k = n^2 - 1 \)\\[2em]
+
+   \textbf{Logo:}\\[1em]
+   \( k = n^2 - 1 \)\\
+   \( T(n) = 2^{(k - 1)} + 1 + O(n) \)\\[1em]
+   \( \text{Logo, } O(2^{n^2 - 1} + n + 1) = O(2^{n^2}) \).
+\end{center}
+
+
+
+
+\section{Conclusão}
+Após finalizar o código, é importante mencionar uma conclusão, onde será explorado as principais dificuldades durante a execução da tarefa, além de uma visão geral sobre o processo de aprendizado e desenvolvimento do projeto.
+
+\subsection{Conclusão final}
+
+\indent O processo de criação de um algoritmo responsável por resolver um nonograma corretamente revelou-se um tanto complexo, tanto para pensar em uma possível forma de resolução, quanto para traduzir esse pensamento em uma linguagem de programação.
+
+As funções de verificar cada célula, linha e coluna, desafiaram o pensamento, visto que, haviam muitas partes para percorrer e uma interdependência crucial entre cada alteração entre elas. Um número considerável de variáveis mostraram-se fundamentais, pois foi preciso contar células preenchidas,  células vazias e blocos de células preenchidas, o que demandou um raciocínio diferente para cada situação. Somado a isso, a implementação do backtracking também foi desafiadora, pois, por explorar uma funcionalidade da recursão na qual nem todos os membros dominavam perfeitamente foi preciso aprimorar o conhecimento através de vídeos e textos, o que de certa forma ocasionou em uma maior aumento do tempo de desenvolvimento do projeto.
+	
+A proposta do trabalho prático revelou-se um pouco laboriosa, principalmente por estar relacionada intrinsecamente com recursividade, um tópico novo para osmembros. Entretanto, a escolha deste tema , foi bastante coerente com o que foi ensinado em sala de aula, obrigando, de certa forma, aos alunos buscarem se aperfeiçoarem nas técnicas ensinadas, favorecendo assim, um maior aprendizado e fixação do conteúdo teórico. Por outro lado, a análise assintótica também requereu uma certa atenção, por estar relacionada com uma função recursiva com várias chamadas, sua análise precisou de um maior domínio em relação a complexidade , o que foi buscado através de estudo e colaboração entre os membros.
+	
+Conclui-se finalmente que o trabalho prático foi importante para fixação dos conhecimentos, contribuindo para uma melhor compreensão na prática de como as coisas realmente funcionam. Ademais, durante o desenvolvimento foi proporcionado, em grande parte no Replit, um ambiente de trabalho em equipe, onde cada membro apresentava suas ideias e as desenvolvia, elevando de forma satisfatória as experiências dos integrantes em relação a isso.
+
+\section{Bibliografia}
+
+ Referências utilizadas ao longo do desenvolvimento do trabalho.
+\begin{itemize}
+    \item Slide das aulas de estruturas de dados I, disponibilizados pelo professor:
+    \href{https://moodlepresencial.ufop.br/mod/url/view.php?id=1010854}{Slides}
+    
+    \item Stack Overflow:
+    \href{https://stackoverflow.com/}{stackoverflow.com}
+    
+    \item Nonograms:  \href{https://www.bing.com/ck/a?!&&p=0abeba355b3d66f2d72b192379a2e33fbd4788f573d6eea7aa1f6a8605cbbdd9JmltdHM9MTczNzMzMTIwMA&ptn=3&ver=2&hsh=4&fclid=0dc038f5-9b1e-6e7a-2f81-2cc19a4f6fe3&psq=nonograms&u=a1aHR0cHM6Ly93d3cucHV6emxlLW5vbm9ncmFtcy5jb20v&ntb=1}{Nonograms.com}
+
+    \item Geek for Geeks na linguagem C:
+    \href{https://www.geeksforgeeks.org/c-programming-language/}{geekforgeeks}
+
+    \item Medium (N-Queens problems):
+    \href{https://medium.com/@1032211306/n-queens-problem-using-backtracking-approach-ef52385d8b00}{mediumNquenns}
+    
+\end{itemize}
+
+\end{document}
